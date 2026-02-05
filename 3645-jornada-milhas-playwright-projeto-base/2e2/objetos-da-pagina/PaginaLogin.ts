@@ -17,7 +17,7 @@ export default class PaginaLogin {
   async visitar() {
     await this.page.goto('/');
     await this.botaoLogin.click();
-    await expect(this.page).toHaveURL('/auth/login');
+    await expect(this.page).toHaveURL('http://localhost:4200/auth/login');
   }
 
   async fazerLogin(email: string, senha: string) {

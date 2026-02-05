@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 
 export default class PaginaPrincipal {
   private readonly page: Page;
@@ -24,7 +24,6 @@ export default class PaginaPrincipal {
     this.botaoAbrirModalPassageiros = page.getByTestId(
       'abrir-modal-passageiros',
     );
-
     this.botaoIncrementarAdultos = page
       .getByTestId('seletor-passageiro-adultos')
       .getByRole('button', { name: 'adição' });
@@ -56,5 +55,55 @@ export default class PaginaPrincipal {
   }
   async visitar() {
     await this.page.goto('/');
+  }
+  async definirSomenteIda() {
+    await this.botaoSomenteIda.click();
+  }
+  async abrirModalPassageiros() {
+    await this.botaoAbrirModalPassageiros.click();
+  }
+
+  async definirPassageirosAdultos(qtd: number) {
+    for (let i = 1; i < qtd; i++) {
+      await this.botaoIncrementarAdultos.click();
+    }
+  }
+  async definirPassageiroscriancas(qtd: number) {
+    for (let i = 0; i < qtd; i++) {
+      await this.botaoIncrementarCriancas.click();
+    }
+  }
+  async definirPassageirosbebes(qtd: number) {
+    for (let i = 0; i < qtd; i++) {
+      await this.botaoIncrementarBebes.click();
+    }
+  }
+  async fecharModalPassageiros() {
+    await this.botaoFecharModalPassageiros.click();
+  }
+  async definirOrigemEDestino(origem: string, destino: string) {
+    await this.campoDropdownOrigem.fill(origem);
+    await this.campoDropdownOrigem.press('Enter');
+    await this.campoDropdownDestino.fill(destino);
+    await this.campoDropdownDestino.press('Enter');
+  }
+  async definirData(date: Date) {
+    const dataFormatada = date.toLocaleDateString('en-US', {
+      dateStyle: 'short',
+    });
+    await this.campoDataIda.fill(dataFormatada);
+  }
+  async buscarPassagens() {
+    await this.botaoBuscarPassagens.click();
+  }
+  async estaMostrandoPassagem(
+    tipoTrajeto: 'Somente ida' | 'Ida e volta',
+    origem: string,
+    destino: string,
+  ) {
+    await expect(this.textoIdaVolta).toHaveText(tipoTrajeto);
+    await expect(this.containerOrigem).toContainText(origem);
+    await expect(this.containerDestino).toContainText(destino);
+    await expect(this.botaoComprar).toBeVisible();
   }
 }
